@@ -1,4 +1,5 @@
 const express = require('express')
+const auth = require('auth')
 const router = express.Router()
 
 const stuffCtrl = require('../controllers/stuff')
@@ -11,18 +12,18 @@ const stuffCtrl = require('../controllers/stuff')
 // Ce sont des fonctions express (app est called au dessus en tant que tel)
 
 // Créer un nouvel item
-router.post('/', stuffCtrl.createThing)
+router.post('/', auth, stuffCtrl.createThing)
 
 // Tout ce qui concerne la page /thing/:id. Donc la page de l'item
-router.get('/:id', stuffCtrl.getOneThing)
+router.get('/:id', auth, stuffCtrl.getOneThing)
 
 // Modification d'un objet
-router.put('/:id', stuffCtrl.modifyThing)
+router.put('/:id', auth, stuffCtrl.modifyThing)
 
 // Suppression d'un objet
-router.delete('/:id', stuffCtrl.deleteThing)
+router.delete('/:id', auth, stuffCtrl.deleteThing)
 
 // Get la page de base
-router.get('/', stuffCtrl.getThings)
+router.get('/', auth, stuffCtrl.getThings)
 
 module.exports = router
