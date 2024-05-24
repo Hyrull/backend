@@ -3,7 +3,6 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
 
-
 exports.signup = (req, res, next) => {
 // Ce qui permet à bcrypt (librairie pour créer le hash du PW) de hash. 10 = 10 tour d'encryption (suffisant)
   bcrypt.hash(req.body.password, 10)
@@ -19,7 +18,6 @@ exports.signup = (req, res, next) => {
     })
     .catch(error => res.status(500).json({ error }))
 }
-
 
 
 exports.login = (req, res, next) => {
