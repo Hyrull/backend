@@ -1,5 +1,7 @@
 const Thing = require('../models/thing')
 
+
+
 exports.createThing = (req, res, next) => {
   // On retire le _id car il est généré par mongoDB et donc pas correspondant à l'ID voulu
   delete req.body._id

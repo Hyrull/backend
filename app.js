@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const stuffRoutes = require('./routes/stuff')
+const userRoutes = require ('./routes/user')
 
 const app = express()
 
@@ -22,5 +23,6 @@ app.use((req, res, next) => {
 
 // call les fonctions dans stuff.js, avec url par défaut /api/stuff
 app.use('/api/stuff', stuffRoutes)
+app.use('/api/auth', userRoutes)
 
 module.exports = app
