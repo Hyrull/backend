@@ -19,6 +19,29 @@ exports.signup = (req, res, next) => {
     .catch(error => res.status(500).json({ error }))
 }
 
-exports.login = (req, res, next) => {
 
+
+exports.login = (req, res, next) => {
+  // Chercher l'utilisateur dont l'email est celui envoyé dans la req
+  User.findOne({email: req.body.email})
+    .then(user => {
+      // si y a pas d'user avec ce mail, on dit que ça marche pas
+      if (user === null) {
+        res.status(401).json({message: 'Combo ID/MDP incorrect'})
+      } else {
+        // bcrypt a une feature pour comparer les mdp, pas besoin de rehash
+        bcrypt.compare(req.body.password, user.password)
+          .then(valid => {
+            if (!valid) { res.status(401).json({message: 'Combo ID/MDP incorrect'})
+             } else {
+            // renvoi du token etc pour l'user
+            res.status(200).json({
+              userId: user._id,
+              token: 'TOKEN'
+            })
+          }})
+          .catch(error => res.status(500).json({ error }))
+      }
+    })
+    .catch(error => res.status(500).json({ error }))
 }
