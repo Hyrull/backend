@@ -2,15 +2,19 @@ const Thing = require('../models/thing')
 
 
 exports.createThing = (req, res, next) => {
-  // On retire le _id car il est généré par mongoDB et donc pas correspondant à l'ID voulu
-  delete req.body._id
-  // '...req.body' est un raccourci pour dire req.body.title etc etc. ça prends tout
+  const thingObject = JSON.parse(req.body.thing)
+  // On clean l'id et l'userId de la requête, et on prends plutôt l'userId du token de login, par sécurité
+  delete thingObject._id
+  delete thingObject._userId
   const thing = new Thing({
-    ...req.body
+    ...thingObject,
+    useriD: req.auth.useriD,
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   })
+
   thing.save()
-  .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-  .catch(err => res.status(400).json({ err }))
+  .then(() => {req.status(201).json({message:'Objet enregistré !'})})
+  .catch((err) => { res.status(400).json({err}) })
 }
 
 exports.modifyThing = (req, res) => {

@@ -1,6 +1,7 @@
 const express = require('express')
 const auth = require('../middlewares/auth');
 const router = express.Router()
+const multer = ('../middle/multer-config')
 
 const stuffCtrl = require('../controllers/stuff')
 
@@ -12,7 +13,7 @@ const stuffCtrl = require('../controllers/stuff')
 // Ce sont des fonctions express (app est called au dessus en tant que tel)
 
 // Créer un nouvel item
-router.post('/', auth, stuffCtrl.createThing)
+router.post('/', auth, multer, stuffCtrl.createThing)
 
 // Tout ce qui concerne la page /thing/:id. Donc la page de l'item
 router.get('/:id', auth, stuffCtrl.getOneThing)
