@@ -1,4 +1,5 @@
 const Thing = require('../models/thing')
+const fs = require('fs')
 
 
 exports.createThing = (req, res, next) => {
@@ -42,9 +43,20 @@ exports.modifyThing = (req, res) => {
 }
 
 exports.deleteThing = (req, res) => {
-  Thing.deleteOne({ _id: req.params.id})
-    .then(() => res.status(200).json({ message: 'Thing supprimée' }))
-    .catch(err => res.status(400).json({ err }))
+  Thing.findOne({ _id: req.params.id})
+  .then(thing => {
+    if (thing.userId != req.auth.userId) {
+      res.status(401).json({message: 'Non autorisé'})
+    } else {
+      const filename = thing.imageUrl.split('/images/')[1]
+      fs.unlink(`image/${filename}`, () => {
+        Thing.deleteOne({_id: req.params.id})
+        .then(() => res.status(200).json({message: 'Succès'}))
+        .catch((err) => res.status(500).json(err))
+      })
+    }
+  })
+  .catch(err => {res.status(500).json({err})})
 }
 
 exports.getThings = (req, res) => {
