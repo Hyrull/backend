@@ -19,7 +19,7 @@ router.post('/', auth, multer, stuffCtrl.createThing)
 router.get('/:id', auth, stuffCtrl.getOneThing)
 
 // Modification d'un objet
-router.put('/:id', auth, stuffCtrl.modifyThing)
+router.put('/:id', auth, multer, stuffCtrl.modifyThing)
 
 // Suppression d'un objet
 router.delete('/:id', auth, stuffCtrl.deleteThing)

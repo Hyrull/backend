@@ -6,6 +6,7 @@ exports.createThing = (req, res, next) => {
   // On clean l'id et l'userId de la requête, et on prends plutôt l'userId du token de login, par sécurité
   delete thingObject._id
   delete thingObject._userId
+  // Créatiion de l'objet et cette fois enregistrement de l'image
   const thing = new Thing({
     ...thingObject,
     useriD: req.auth.useriD,
@@ -18,9 +19,26 @@ exports.createThing = (req, res, next) => {
 }
 
 exports.modifyThing = (req, res) => {
-  Thing.updateOne({ _id: req.params.id}, {...req.body, _id: req.params.id})
-    .then(() => res.status(200).json({ message: 'Objet modifié avec succès !' }))
-    .catch(err => res.status(400).json({err}))
+  const thingObject = req.file ? {
+    // Si y a une nouvelle image, on la regénère encore
+    ...JSON.parse(req.body.thing),
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    // Si on a pas déjà l'image : on la prends dans le body de la request
+  } : { ...req.body }
+
+  delete thingObject._userId
+  Thing.findOne({_id: req.params.id})
+  .then((thing) => {
+    // Petit check que la personne modifie bien une image qui est la sienne : on confronte l'userId de l'objet à celui du token de la personne qui edit
+    if (thing.useriD != req.auth.userId) {
+      res.status(401).json({ message : 'Non autorisé' })
+    } else {
+      Thing.updateOne({_id: req.params.id}, {...thingObject, _id: req.params.id})
+      .then(() => res.status(200).json({message : 'Réussi'}))
+      .catch((err) => res.status(400).json({err}))
+    }
+  })
+  .catch((err) => res.status(400).json({err}))
 }
 
 exports.deleteThing = (req, res) => {
