@@ -24,5 +24,5 @@ app.use((req, res, next) => {
 // call les fonctions dans stuff.js, avec url par défaut /api/stuff
 app.use('/api/stuff', stuffRoutes)
 app.use('/api/auth', userRoutes)
-app.use('image', express.static(path.join(__dirname, 'images')))
+app.use('/image', express.static(path.join(__dirname, 'images')))
 module.exports = app
